@@ -126,9 +126,6 @@ uwsgi==2.0.19.1
 werkzeug==1.0.1
     # via flask
 wrapt==1.12.1
-psycopg2==2.8.6
-wheel==0.36.2
-
     # via
     #   opentelemetry-instrumentation
     #   opentelemetry-instrumentation-jinja2
