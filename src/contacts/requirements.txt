@@ -223,6 +223,8 @@ zipp==1.2.0
     # via
     #   -r requirements.in
     #   importlib-metadata
+wheel==0.36.2
+psycopg2==2.8.6
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
