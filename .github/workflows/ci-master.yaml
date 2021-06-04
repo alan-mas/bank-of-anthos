@@ -31,7 +31,8 @@ jobs:
     - name: Python install
       timeout-minutes: 20
       run: |
-        pip install pylint 
+        pip install pylint
+        pip install psycopg2-binary
     - name: Python Checkstyle
       timeout-minutes: 20
       run: |
