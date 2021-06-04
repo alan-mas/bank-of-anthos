@@ -24,19 +24,6 @@ jobs:
     runs-on: [self-hosted, live-v2]
     steps:
     - uses: actions/checkout@v2
-    - name: License Check
-      run: |
-        set -x
-        if [[ -d ".git" ]]; then
-          rm -rf .git
-        fi
-        git init
-        git add --all
-        git -c user.name="CI Bot" -c user.email="<>" commit -m "initial state"
-        addlicense ./
-        if [[ -n $(git status -s) ]]; then
-          exit 1
-        fi
     - name: Java Checkstyle
       timeout-minutes: 20
       run: |
