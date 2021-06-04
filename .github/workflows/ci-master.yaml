@@ -28,6 +28,10 @@ jobs:
       timeout-minutes: 20
       run: |
         mvn checkstyle:check
+    - name: Python install
+      timeout-minutes: 20
+      run: |
+        pip install pylint 
     - name: Python Checkstyle
       timeout-minutes: 20
       run: |
