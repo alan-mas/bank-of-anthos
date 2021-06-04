@@ -34,6 +34,7 @@ jobs:
         pip install pylint
         pip install psycopg2-binary
         pip install wheel
+        pip install uWSGI
     - name: Python Checkstyle
       timeout-minutes: 20
       run: |
