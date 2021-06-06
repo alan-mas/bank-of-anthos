@@ -20,18 +20,101 @@ on:
       - master
 jobs:
   push-deploy:
-    runs-on: [self-hosted, live-v2]
+    runs-on: [ubuntu-20.04]
+
     steps:
     - uses: actions/checkout@v2
+    - name: Install skaffold
+      run: |
+        curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64 && \
+        chmod +x skaffold && \
+        sudo mv skaffold /usr/local/bin
+
+    - name: Install gcloud
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        version: '309.0.0'
+        service_account_key: ${{ secrets.GCLOUD_KEY }}
+        project_id: learning-project-288414
+    # Need to create first a service account key.
+    # https://cloud.google.com/iam/docs/creating-managing-service-account-keys
+    # then need to encrypted with base64
+    # https://github.com/actions-hub/gcloud
+    - name: Login to gcloud
+      id: gcloud
+      uses: elgohr/gcloud-login-action@0.2
+      with:
+        account_key: ${{ secrets.GCLOUD_KEY }}
+
+
     - name: Push latest images to GCR
       timeout-minutes: 20
       run: |
+
+        gcloud auth configure-docker
+        
+        chmod +x mvnw
+
         skaffold config set --global local-cluster false
         # tag with git hash
-        skaffold build --default-repo=gcr.io/$PROJECT_ID \
-                       --tag=$GITHUB_SHA
+        # skaffold build --default-repo=gcr.io/$PROJECT_ID \
+        #                --tag=$GITHUB_SHA
         # tag as latest
+
+        
         skaffold build --default-repo=gcr.io/$PROJECT_ID \
                        --tag=latest
       env:
-        PROJECT_ID: ${{ secrets.PROJECT_ID }}
+        PROJECT_ID: "learning-project-288414"
+
+
+# TODO: definir secretos en el repository settings. {{ secrets.}}
+# https://docs.github.com/en/actions/reference
+
+# name: Push, Build and Deploy
+# on:
+#   push:
+#     # run on pushes to master
+#     branches:
+#       - master
+
+
+# jobs:
+#   docker-image:
+#     name: Build & Publish Docker Image
+#     needs: [Continuous Integration - Master]
+#     runs-on: [ubuntu-20.04]
+
+#     steps:
+#         # Need to checkout again as version it is not persisten job to job
+#       - name: Checkout working branch
+#         uses: actions/checkout@v1
+
+#         # gcr.io currently hosts the images in the United States.
+#         # https://cloud.google.com/container-registry/docs/overview
+#       - name: Set Docker Registry
+#         run: echo ::set-env name=DOCKER_REGISTRY::gcr.io
+
+
+#       - name: Set Docker Image
+#         run: echo ::set-env name=DOCKER_IMAGE::${{ env.DOCKER_REGISTRY }}/earning-project-288414/first-image
+
+
+#       - name: Login to gcloud registry
+#         id: gcloud
+#         uses: elgohr/gcloud-login-action@0.2
+#         with:
+#           account_key: ${{ secrets.GCLOUD_KEY }}
+          
+#         # after login to gcloud login works, we use username and password outputs
+#         # SSH_PRIVATE_KEY is our machine SSH.keys
+#       - name: Publish Docker Image
+#         uses: elgohr/Publish-Docker-Github-Action@2.14
+#         env:
+#           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+#         with:
+#           name: ${{ env.DOCKER_IMAGE }}
+#           username: ${{ steps.gcloud.outputs.username }}
+#           password: ${{ steps.gcloud.outputs.password }}
+#           registry: ${{ env.DOCKER_REGISTRY }}
+#           buildargs: SSH_PRIVATE_KEY
