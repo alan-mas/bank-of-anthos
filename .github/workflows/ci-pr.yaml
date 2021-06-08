@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: "Continuous Integration - Pull Request"
+name: "Continuous Integration - Master"
 on:
   pull_request:
     branches:
       - master
+
 jobs:
   code-tests:
     runs-on: [self-hosted, live-v2]

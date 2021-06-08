@@ -14,10 +14,12 @@
 
 name: "Push and Deploy"
 on:
-  push:
-    # run on pushes to master
-    branches:
-      - master
+  workflow_run:
+    workflows: ["Continuous Integration"]
+    branches: [master]
+    types: 
+      - completed
+
 jobs:
   push-deploy:
     runs-on: [ubuntu-20.04]
